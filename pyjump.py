@@ -55,6 +55,7 @@ def callback(child):
     print(child)
 
 def update_items(selected):
+    for button in window.children.values(): button.pack_forget()
     display_nodes(selected)
 
 def display_nodes(node):
