@@ -51,16 +51,18 @@ window.title("PyJump")
 # T.config(font=("Arial"))
 # T.pack()
 
-def callback():
-    print("Hi")
+def callback(child):
+    print(child)
 
 def update_items(selected):
     display_nodes(selected)
 
 def display_nodes(node):
     for child in node.children:
-        b = Button(window, text=child)
-        # b = Button(window, text=child, command = update_items(child))
+        #Bare with me here. So a button is created for each child to a given node. At each button click
+        #we must have a function to update the items. Since lamda uses the last variable given
+        #we use a trick child=child to force the current child to be passed.
+        b = Button(window, text=child, command = lambda child=child: update_items(child))
         b.pack()
 
 display_nodes(root)
