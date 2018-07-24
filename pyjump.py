@@ -43,33 +43,36 @@ for pre, fill, node in RenderTree(root):
 screen_width = int((window.winfo_screenwidth()/2) - 350)
 screen_height = int((window.winfo_screenheight()/2) -212)
 
-window.geometry("700x425+" + str(screen_width) + "+" + str(screen_height))
+window.geometry("750x425+" + str(screen_width) + "+" + str(screen_height))
 window.deiconify()
 window.title("PyJump")
-
-# T = tk.Text(window)
-# T.config(font=("Arial"))
-# T.pack()
 
 def callback(child):
     print(child)
 
 def update_items(selected):
     if len(selected.children) != 0:
-        for button in window.children.values(): button.pack_forget()
+        for button in window.children.values(): button.grid_forget()
         display_nodes(selected)
 
 
 def display_nodes(node):
+    i = 0
+    j = 0
     for child in node.children:
         #Bare with me here. So a button is created for each child to a given node. At each button click
         #we must have a function to update the items. Since lamda uses the last variable given
         #we use a trick child=child to force the current child to be passed.
-        b = Button(window, text=child, command = lambda child=child: update_items(child))
-        b.pack()
+        childtext = child.name
+        b = Button(window, text=childtext, command = lambda child=child: update_items(child), bg = "#2b2b2b", fg = "white", width = 20, height = 10, wraplength = 100)
+        if i == 5:
+            i = 0
+            j += 1
+        b.grid(row = j, column = i)
+        i += 1
     if child.parent != root:
-        b = Button(window, text="Back", command = lambda: update_items(node.parent))
-        b.pack()
+        b = Button(window, text="Back", command = lambda: update_items(node.parent),bg = "#2b2b2b", fg = "white", width = 20, height = 10)
+        b.grid(row = j, column = i + 1)
     
 
 display_nodes(root)
