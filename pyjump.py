@@ -3,6 +3,9 @@ from tkinter.filedialog import askopenfilename
 import os
 from anytree import Node, RenderTree
 import sys
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import (QWidget, QToolTip, 
     QPushButton, QApplication, QGridLayout)
 from PyQt5.QtGui import QFont
@@ -71,7 +74,10 @@ class Example(QWidget):
         # btn.resize(btn.sizeHint())
         # btn.move(50, 50)       
         self.display_nodes(root)
-        self.setWindowTitle('PyVi') 
+        # self.setWindowTitle('PyVi') 
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_NoSystemBackground, True)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.center()   
         self.show()
 
