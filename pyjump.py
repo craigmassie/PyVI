@@ -40,10 +40,10 @@ for pre, fill, node in RenderTree(root):
     print("%s%s" % (pre, node.name))
 
 
-screen_width = int((window.winfo_screenwidth()/2) - 350)
-screen_height = int((window.winfo_screenheight()/2) -212)
+screen_width = int((window.winfo_screenwidth()/2) - 375)
+screen_height = int((window.winfo_screenheight()/2) -260)
 
-window.geometry("750x425+" + str(screen_width) + "+" + str(screen_height))
+window.geometry("750x320+" + str(screen_width) + "+" + str(screen_height))
 window.deiconify()
 window.title("PyJump")
 
@@ -55,7 +55,7 @@ def update_items(selected):
         for button in window.children.values(): button.grid_forget()
         display_nodes(selected)
 
-
+ 
 def display_nodes(node):
     i = 0
     j = 0
