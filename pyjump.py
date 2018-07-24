@@ -55,8 +55,10 @@ def callback(child):
     print(child)
 
 def update_items(selected):
-    for button in window.children.values(): button.pack_forget()
-    display_nodes(selected)
+    if len(selected.children) != 0:
+        for button in window.children.values(): button.pack_forget()
+        display_nodes(selected)
+
 
 def display_nodes(node):
     for child in node.children:
@@ -65,6 +67,10 @@ def display_nodes(node):
         #we use a trick child=child to force the current child to be passed.
         b = Button(window, text=child, command = lambda child=child: update_items(child))
         b.pack()
+    if child.parent != root:
+        b = Button(window, text="Back", command = lambda: update_items(node.parent))
+        b.pack()
+    
 
 display_nodes(root)
 window.mainloop()
