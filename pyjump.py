@@ -1,14 +1,15 @@
-import tkinter as tk
-from tkinter import *
+from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import os
 from anytree import Node, RenderTree
+import sys
+from PyQt5.QtWidgets import (QWidget, QToolTip, 
+    QPushButton, QApplication, QGridLayout)
+from PyQt5.QtGui import QFont
 
-window = tk.Tk()
-window.withdraw()
-
+Tk().withdraw()
 file_path = askopenfilename()
-
+grid = QGridLayout()
 def open_file(file_path):
     code = (open(file_path, "r"))
 
@@ -39,41 +40,72 @@ open_file(file_path)
 for pre, fill, node in RenderTree(root):
     print("%s%s" % (pre, node.name))
 
-
-screen_width = int((window.winfo_screenwidth()/2) - 375)
-screen_height = int((window.winfo_screenheight()/2) -260)
-
-window.geometry("750x320+" + str(screen_width) + "+" + str(screen_height))
-window.deiconify()
-window.title("PyJump")
-
-def callback(child):
-    print(child)
-
-def update_items(selected):
-    if len(selected.children) != 0:
-        for button in window.children.values(): button.grid_forget()
-        display_nodes(selected)
-
- 
-def display_nodes(node):
-    i = 0
-    j = 0
-    for child in node.children:
-        #Bare with me here. So a button is created for each child to a given node. At each button click
-        #we must have a function to update the items. Since lamda uses the last variable given
-        #we use a trick child=child to force the current child to be passed.
-        childtext = child.name
-        b = Button(window, text=childtext, command = lambda child=child: update_items(child), bg = "#2b2b2b", fg = "white", width = 20, height = 10, wraplength = 100)
-        if i == 5:
-            i = 0
-            j += 1
-        b.grid(row = j, column = i)
-        i += 1
-    if child.parent != root:
-        b = Button(window, text="Back", command = lambda: update_items(node.parent),bg = "#2b2b2b", fg = "white", width = 20, height = 10)
-        b.grid(row = j, column = i + 1)
+class Example(QWidget):
     
+    def __init__(self):
+        super().__init__()
+        
+        self.initUI()
+        
+        
+    def initUI(self):
+        QToolTip.setFont(QFont('SansSerif', 10))
+        self.setToolTip('This is a <b>QWidget</b> widget')
+        
+        # btn = QPushButton('Button', self)
+        # btn.setToolTip('This is a <b>QPushButton</b> widget')
+        # btn.resize(btn.sizeHint())
+        # btn.move(50, 50)       
+        self.display_nodes(root)
+        self.setWindowTitle('Tooltips') 
+        self.center()   
+        self.show()
 
-display_nodes(root)
-window.mainloop()
+    def update_items(self, selected):
+        if len(selected.children) != 0:
+            for i in reversed(range(grid.count())): 
+                grid.itemAt(i).widget().setParent(None)
+            self.display_nodes(selected)
+
+    
+    def display_nodes(self, node):
+        i = 0
+        j = 0
+        for child in node.children:
+            #Bare with me here. So a button is created for each child to a given node. At each button click
+            #we must have a function to update the items. Since lamda uses the last variable given
+            #we use a trick child=child to force the current child to be passed.
+            childtext = child.name
+            btn = QPushButton(childtext, self)
+            btn.setStyleSheet("background-color: #2b2b2b; color: white; height: 100px; width: 100px;")
+            if len(child.children) != 0:
+                btn.setStyleSheet("background-color: #4b4b4b; color: white; height: 100px; width: 100px;")
+            btn.clicked.connect(lambda state, bound_child=child: self.update_items(bound_child))
+            btn.setToolTip('This button represents the ' + childtext + ' block of code')
+            if i == 5:
+                i = 0
+                j +=1 
+            grid.addWidget(btn, j, i)
+            i += 1    
+
+        if child.parent != root:
+            btn = QPushButton("Back", self)
+            btn.setStyleSheet("background-color: #2b2b2b; color: white; height: 100px;")
+            btn.clicked.connect(lambda: self.update_items(node.parent))
+            grid.addWidget(btn, i+1, j)
+        
+        self.setLayout(grid)
+
+    def center(self):
+        frameGm = self.frameGeometry()
+        screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
+        centerPoint = QApplication.desktop().screenGeometry(screen).center()
+        frameGm.moveCenter(centerPoint)
+        self.move(frameGm.topLeft())
+        
+
+if __name__ == '__main__':
+    
+    app = QApplication(sys.argv)
+    ex = Example()
+    sys.exit(app.exec_())
