@@ -13,6 +13,17 @@ from PyQt5.QtGui import QFont
 Tk().withdraw()
 file_path = askopenfilename()
 grid = QGridLayout()
+
+def get_indent(current, parent):
+    if parent != root:
+        if ((len(current) - len(current.strip())) - ((len(parent.name)) - len(parent.name.strip())) == 0):
+            return parent.parent
+        else:
+            return get_indent(current, parent.parent)
+    else:
+        return root
+
+
 def open_file(file_path):
     code = (open(file_path, "r"))
 
@@ -21,28 +32,25 @@ def open_file(file_path):
     for line in lines:
         if line.strip().startswith("#"):
             continue
-        #if we define a function, and it's not indented
-        if "def " in line or "class " in line:
+
+        keywords = ["def ", "class ", "for ", "if ", "elif", "while ", "try", "else", "except", "finally"]
+
+        if any(line.strip().startswith(keyword) for keyword in keywords):
             if not line[0].isspace():
-                print(line.split())
-                name = line
-                last = Node(name, parent=root)
-        #if we have a for loop, checks indent
-        elif "for " in line or "if " in line or "while " in line or "try" in line or "else" in line or "except" in line or "finally" in line:
-            if not line[0].isspace():
-                last = Node(line.strip("\n"), parent =root)
+                last = Node(line, parent =root)
             #If the current line is more indented than the last
             else:
-                cond = (len(line) - len(line.strip()) - ((len(last.name) + 1) - len(last.name.strip())))
+                cond = ((len(line) - len(line.strip())) - ((len(last.name)) - len(last.name.strip())))
                 if (cond > 0):
-                    indented = Node(line.strip("\n"), parent =last)
+                    indented = Node(line, parent =last)
                     last = indented
                 #Need to check if equal or before
                 elif (cond == 0):
-                    indented = Node(line.strip("\n"), parent =last.parent)
+                    indented = Node(line, parent =last.parent)
                     last = indented
+                #If that current line is indented less than previous
                 elif (cond < 0):
-                    indented = Node(line.strip("\n"), parent =last.parent.parent)
+                    indented = Node(line, parent = get_indent(line, last.parent))
                     last = indented
         else:
             try:
@@ -57,7 +65,7 @@ open_file(file_path)
 for pre, fill, node in RenderTree(root):
     print("%s%s" % (pre, node.name))
 
-class Example(QWidget):
+class PyViUI(QWidget):
     
     def __init__(self):
         super().__init__()
@@ -95,7 +103,7 @@ class Example(QWidget):
             #Bare with me here. So a button is created for each child to a given node. At each button click
             #we must have a function to update the items. Since lamda uses the last variable given
             #we use a trick child=child to force the current child to be passed.
-            childtext = child.name
+            childtext = child.name.strip()
             btn = QPushButton(childtext, self)
             btn.setStyleSheet("background-color: #2b2b2b; color: white; height: 100px; width: 200px; max-width: 200px;")
             if len(child.children) != 0:
@@ -127,5 +135,5 @@ class Example(QWidget):
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
-    ex = Example()
+    ex = PyViUI()
     sys.exit(app.exec_())
