@@ -1,5 +1,6 @@
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+from tkinter import messagebox
 import os
 from anytree import Node, RenderTree
 import sys
@@ -12,6 +13,9 @@ from PyQt5.QtGui import QFont
 
 Tk().withdraw()
 file_path = askopenfilename()
+if not file_path.endswith(".py"):
+    messagebox.showerror('Incorrect Extension', 'This program current only supports .py files.')
+    exit()
 grid = QGridLayout()
 
 def get_indent(current, parent):
@@ -75,14 +79,8 @@ class PyViUI(QWidget):
         
     def initUI(self):
         QToolTip.setFont(QFont('SansSerif', 10))
-        self.setToolTip('This is a <b>QWidget</b> widget')
-        
-        # btn = QPushButton('Button', self)
-        # btn.setToolTip('This is a <b>QPushButton</b> widget')
-        # btn.resize(btn.sizeHint())
-        # btn.move(50, 50)       
-        self.display_nodes(root)
-        # self.setWindowTitle('PyVi') 
+        self.setToolTip('This is a <b>QWidget</b> widget')     
+        self.display_nodes(root) 
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_NoSystemBackground, True)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -112,10 +110,11 @@ class PyViUI(QWidget):
         i = 0
         j = 0
         for child in node.children:
-            #Bare with me here. So a button is created for each child to a given node. At each button click
-            #we must have a function to update the items. Since lamda uses the last variable given
-            #we use a trick child=child to force the current child to be passed.
             childtext = child.name.strip()
+            if len(childtext) > 40:
+                childtext = childtext[:40] + '\n' + childtext[40:]
+            if len(childtext) > 80:
+                childtext = childtext[:80] + '\n' + childtext[80:]
             btn = QPushButton(childtext, self)
             btn.setStyleSheet("""
             .QPushButton{
@@ -135,6 +134,9 @@ class PyViUI(QWidget):
                         background-color: #1e90ff;
                     }
                     """)
+            #Bare with me here. So a button is created for each child to a given node. At each button click
+            #we must have a function to update the items. Since lamda uses the last variable given
+            #we use a trick child=child to force the current child to be passed.
             btn.clicked.connect(lambda state, bound_child=child: self.update_items(bound_child))
             btn.setToolTip('This button represents the ' + childtext + ' block of code')
             if i == 5:
