@@ -106,6 +106,7 @@ class PyViUI(QWidget):
             childtext = child.name.strip()
             btn = QPushButton(childtext, self)
             btn.setStyleSheet("background-color: #2b2b2b; color: white; height: 100px; width: 200px; max-width: 200px;")
+            btn.setAutoDefault(True)
             if len(child.children) != 0:
                 btn.setStyleSheet("background-color: #4b4b4b; color: white; height: 100px; max-width: 200px; width: 200px;")
             btn.clicked.connect(lambda state, bound_child=child: self.update_items(bound_child))
@@ -119,6 +120,7 @@ class PyViUI(QWidget):
         if child.parent != root:
             btn = QPushButton("Back", self)
             btn.setStyleSheet("background-color: #2b2b2b; color: white; height: 100px; max-width: 200px; width: 200px;")
+            btn.setAutoDefault(True)
             btn.clicked.connect(lambda: self.update_items(node.parent))
             grid.addWidget(btn, i+1, j)
         
