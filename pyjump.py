@@ -86,7 +86,19 @@ class PyViUI(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_NoSystemBackground, True)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
-        self.center()   
+        self.center()
+        self.setStyleSheet("""
+            .QPushButton{
+                background-color: #2b2b2b; 
+                color: white; 
+                height: 100px; 
+                width: 200px; 
+                max-width: 200px;
+            }
+            .QPushButton:hover{
+                background-color: #1e90ff;
+            }
+            """)
         self.show()
 
     def update_items(self, selected):
@@ -105,10 +117,24 @@ class PyViUI(QWidget):
             #we use a trick child=child to force the current child to be passed.
             childtext = child.name.strip()
             btn = QPushButton(childtext, self)
-            btn.setStyleSheet("background-color: #2b2b2b; color: white; height: 100px; width: 200px; max-width: 200px;")
+            btn.setStyleSheet("""
+            .QPushButton{
+                background-color: #2b2b2b; 
+            }
+            .QPushButton:hover{
+                background-color: #1e90ff;
+            }
+            """)
             btn.setAutoDefault(True)
             if len(child.children) != 0:
-                btn.setStyleSheet("background-color: #4b4b4b; color: white; height: 100px; max-width: 200px; width: 200px;")
+                btn.setStyleSheet("""
+                    .QPushButton{
+                        background-color: #4b4b4b; 
+                    }
+                    .QPushButton:hover{
+                        background-color: #1e90ff;
+                    }
+                    """)
             btn.clicked.connect(lambda state, bound_child=child: self.update_items(bound_child))
             btn.setToolTip('This button represents the ' + childtext + ' block of code')
             if i == 5:
@@ -119,7 +145,6 @@ class PyViUI(QWidget):
 
         if child.parent != root:
             btn = QPushButton("Back", self)
-            btn.setStyleSheet("background-color: #2b2b2b; color: white; height: 100px; max-width: 200px; width: 200px;")
             btn.setAutoDefault(True)
             btn.clicked.connect(lambda: self.update_items(node.parent))
             grid.addWidget(btn, i+1, j)
