@@ -3,3 +3,4 @@ The goal of PyVi was to create a tool which allows visually impaired users to qu
 
 PyVi was designed with accessibility in mind, and will work with your favourite screen reader.
 
+[![Capture.png](https://s15.postimg.cc/5tbvv19ej/Capture.png)]
